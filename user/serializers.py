@@ -3,10 +3,30 @@ from rest_framework import serializers
 
 
 class UserSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(
+        write_only=True,
+        min_length=5,
+        required=False,
+        style={"input_type": "password"},
+        trim_whitespace=False,
+    )
+
     class Meta:
         model = get_user_model()
-        fields = ("id", "username", "email", "is_staff")
+        fields = ("id", "username", "password", "email", "is_staff")
         read_only_fields = ("id", "is_staff")
+
+    def update(self, instance, validated_data):
+        password = validated_data.pop("password", None)
+
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+
+        if password:
+            instance.set_password(password)
+
+        instance.save()
+        return instance
 
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
