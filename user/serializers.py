@@ -62,7 +62,7 @@ class UserLoginSerializer(serializers.Serializer):
         )
 
         if not user:
-            raise serializers.ValidationError("Unable to authenticate with provided credentials")
+            raise serializers.ValidationError("Unable to authenticate with provided credentials")  # noqa: E501
 
         attrs["user"] = user
         return attrs
